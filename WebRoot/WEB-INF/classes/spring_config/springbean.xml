@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xmlns:context="http://www.springframework.org/schema/context"
+     xsi:schemaLocation="http://www.springframework.org/schema/beans
+         http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+         http://www.springframework.org/schema/context
+         http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+   <context:annotation-config/>
+    <!-- 静态文件访问,主要是针对DispatcherServlet的拦截是/的--> 
+	<!--<mvc:annotation-driven /> 
+	<mvc:resources location="/image/" mapping="/image/**"/> 
+	<mvc:resources location="/css/" mapping="/css/**"/> 
+	<mvc:resources location="/js/" mapping="/js/**"/> -->
+    <!-- spring mvc的应用 -->
+   <context:component-scan base-package="com.legal.basices.controller"></context:component-scan>
+
+	<!-- 上传拦截，如最大上传值及最小上传值 -->
+		<bean id="multipartResolver"
+			class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+			<!-- one of the properties available; the maximum file size in bytes -->
+			<property name="maxUploadSize" value="7277180" />
+		</bean> 
+	<!-- 视图-->
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/WEB-INF/jsp/" />
+		<property name="suffix" value=".jsp" />
+	</bean>
+   <!--数据源 -->
+   <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+	<property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE" />  
+    <property name="ignoreResourceNotFound" value="false" />
+	<property name="locations">
+	<value>classpath:spring_config/dbconnect.properties</value>
+	</property>
+	</bean>
+   <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+    <!-- <property name="driverClassName" value="${jdbc.driverClassName}"/>
+    <property name="url" value="${jdbc.url}"/>
+    <property name="username" value="${jdbc.username}"/>
+    <property name="password" value="${jdbc.password}"/> -->
+    <property name="driverClassName" value="${DRIVER_NAME}"/>
+    <property name="url" value="${DATABASE_URL}"/>
+    <property name="username" value="${DATABASE_USER}"/>
+    <property name="password" value="${DATABASE_PASSWORD}"/>
+    </bean>
+     <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+    <property name="dataSource" ref="dataSource"/>
+    <property name="packagesToScan">
+      <list>
+        <value>com.legal.basics.domain</value>
+      </list>
+    </property>
+    <property name="hibernateProperties">
+      <props>
+      	<!-- <prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop> -->
+      	<prop key="hibernate.dialect">org.hibernate.dialect.DmDialect</prop>
+      	<prop key="hibernate.show_sql">true</prop>
+      	<prop key="hibernate.hbm2ddl.auto">update</prop>
+      </props>
+    </property>
+      </bean>
+  <!--  <bean id="hibernateUtil" class="com.science.hibernateUtil.HibernateUtil"></bean> -->
+</beans>
